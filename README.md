@@ -1,6 +1,6 @@
 # Conversor de Vídeos Distribuído com Kafka
 
-https://github.com/diego-aquino/kafka-video-converter/assets/58959382/4866d08b-b118-4926-abad-069f7105ce2f
+https://github.com/diego-aquino/kafka-video-converter/assets/58959382/4d6e0398-f9f2-49e7-b49b-aa0e15c84c97
 
 Este projeto foi desenvolvido como parte da disciplina de Sistemas Distribuídos 2023.2 da UFCG (Universidade Federal de
 Campina Grande). O objetivo foi criar um mini conversor de vídeos distribuído utilizando o [Apache
