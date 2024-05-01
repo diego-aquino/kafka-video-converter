@@ -3,31 +3,31 @@
 https://github.com/diego-aquino/kafka-video-converter/assets/58959382/4d6e0398-f9f2-49e7-b49b-aa0e15c84c97
 
 Este projeto foi desenvolvido como parte da disciplina de Sistemas Distribuídos 2023.2 da UFCG (Universidade Federal de
-Campina Grande). O objetivo foi criar um mini conversor de vídeos distribuído utilizando o [Apache
+Campina Grande). O objetivo foi criar um conversor de vídeos distribuído utilizando o [Apache
 Kafka](https://kafka.apache.org).
 
 A configuração inicial do projeto seguiu o [Guia básico:
-Kafka](https://raissonsouto.notion.site/Guia-b-sico-Kafka-8dfda6e07595409380e36202d000455c) da disciplina.
+Kafka](https://raissonsouto.notion.site/Guia-b-sico-Kafka-8dfda6e07595409380e36202d000455c) da disciplina, feito por [@raissonsouto](https://github.com/raissonsouto).
 
 - [Conversor de Vídeos Distribuído com Kafka](#conversor-de-vídeos-distribuído-com-kafka)
   - [Funcionamento](#funcionamento)
   - [Execução](#execução)
     - [1. Pré-requisitos](#1-pré-requisitos)
     - [2. Configuração do ambiente virtual](#2-configuração-do-ambiente-virtual)
-    - [3. Instalação de dependências](#3-instalação-de-dependências)
+    - [3. Instalação das dependências](#3-instalação-das-dependências)
     - [4. Execução](#4-execução)
 
 ## Funcionamento
 
 1. Uma CLI ([`cli.py`](./src/cli.py)) recebe URLs de vídeos do [YouTube](https://www.youtube.com) de um terminal.
    Ao receber uma URL, esse script publicará uma mensagem no tópico `video_downloads` com a URL do vídeo.
-2. Um grupo de consumidores ([`video_downloader.py`](./src/video_downloader.py)) estará escutando o tópico
+2. Um conjunto de consumidores ([`video_downloader.py`](./src/video_downloader.py)) estará escutando o tópico
    `video_downloads`. Após receber uma mensagem, um worker de download baixará o vídeo usando
    [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) para `./videos/downloads` e publicará uma mensagem no tópico
-   `video_conversions`, com o caminho do vídeo baixado.
-3. Outro grupo de consumidores ([`video_converter.py`](./src/video_converter.py)) estará escutando no tópico
-   `video_conversions`. Cada um desses workers de conversão tem uma resolução de saída configurada (ex.: 720p, 360p,
-   144p, etc.), receberá o caminho do vídeo baixado e fará a conversão utilizando
+   `video_conversions` com o caminho do vídeo baixado.
+3. Outro conjunto de consumidores ([`video_converter.py`](./src/video_converter.py)) estará escutando no tópico
+   `video_conversions`. Cada um desses workers de conversão tem uma resolução de saída configurada (ex.: `720p`, `360p`,
+   `144p`, etc.), receberá o caminho do vídeo baixado e fará a conversão utilizando
    [`ffmpeg-python`](https://github.com/kkroening/ffmpeg-python), salvando os resultados em `./videos/converted`. A
    conversão é feita por todos os workers em paralelo, cada um com a sua resolução. Depois de terminar, eles publicarão
    uma mensagem com o seu resultado no tópico `video_results`.
@@ -48,7 +48,7 @@ python -m venv venv
 source venv/bin/activate
 ```
 
-### 3. Instalação de dependências
+### 3. Instalação das dependências
 
 ```bash
 pip install -r requirements.txt
@@ -66,7 +66,6 @@ pip install -r requirements.txt
 
    ```bash
    bash scripts/workers.sh 1280:720 640:360 256:144
-
    ```
 
    Este comando inicia 1 worker de download e 3 workers de conversão para 1280x720, 640x360 e 256x144.
