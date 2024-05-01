@@ -19,19 +19,24 @@ Kafka](https://raissonsouto.notion.site/Guia-b-sico-Kafka-8dfda6e07595409380e362
 
 ## Funcionamento
 
-1. Uma CLI ([`cli.py`](./src/cli.py)) recebe URLs de vídeos do [YouTube](https://www.youtube.com) de um terminal.
-   Ao receber uma URL, esse script publicará uma mensagem no tópico `video_downloads` com a URL do vídeo.
-2. Um conjunto de consumidores ([`video_downloader.py`](./src/video_downloader.py)) estará escutando o tópico
-   `video_downloads`. Após receber uma mensagem, um worker de download baixará o vídeo usando
-   [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) para `./videos/downloads` e publicará uma mensagem no tópico
-   `video_conversions` com o caminho do vídeo baixado.
-3. Outro conjunto de consumidores ([`video_converter.py`](./src/video_converter.py)) estará escutando no tópico
+![Diagrama arquitetural](./docs/images/architecture-diagram.png)
+
+1. Uma CLI ([`cli.py`](./src/cli.py)) recebe URLs de vídeos do [YouTube](https://www.youtube.com) de um terminal. Ao
+   receber uma URL, uma mensagem será publicada no tópico `video_downloads` com a URL do vídeo.
+2. Um grupo de downloaders ([`video_downloader.py`](./src/video_downloader.py)) estará escutando o tópico
+   `video_downloads` e um deles receberá a mensagem de download.
+3. O worker de download baixará o vídeo usando [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) para `./videos/downloads`.
+4. Quando o download for finalizado, o worker de download publicará uma mensagem no tópico `video_conversions` com o
+   caminho do vídeo original baixado.
+5. Um grupo de conversores ([`video_converter.py`](./src/video_converter.py)) estará escutando no tópico
    `video_conversions`. Cada um desses workers de conversão tem uma resolução de saída configurada (ex.: `720p`, `360p`,
-   `144p`, etc.), receberá o caminho do vídeo baixado e fará a conversão utilizando
-   [`ffmpeg-python`](https://github.com/kkroening/ffmpeg-python), salvando os resultados em `./videos/converted`. A
-   conversão é feita por todos os workers em paralelo, cada um com a sua resolução. Depois de terminar, eles publicarão
-   uma mensagem com o seu resultado no tópico `video_results`.
-4. A CLI estará escutando no tópico `video_results` e mostrará no terminal os caminhos dos arquivos gerados.
+   `144p`, etc.).
+6. Um worker de conversão de cada resolução receberá o caminho do vídeo baixado e fará a conversão utilizando
+   [`ffmpeg-python`](https://github.com/kkroening/ffmpeg-python). A conversão é feita em paralelo para cada resolução.
+7. Após as conversões, os vídeos gerados são salvos em `./videos/converted`.
+8. Quando cada conversão finaliza, uma mensagem é publicada no tópico `video_results` contendo o caminho do arquivo
+   convertido.
+9. A CLI estará escutando no tópico `video_results` e mostrará no terminal os caminhos dos arquivos gerados.
 
 ## Execução
 
