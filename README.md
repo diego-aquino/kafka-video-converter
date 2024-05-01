@@ -67,6 +67,14 @@ pip install -r requirements.txt
    docker compose up kafka
    ```
 
+> [!NOTE]
+>
+> Se você estiver usando Linux, pode ser necessário adicionar o hostname `kafka` para `127.0.0.1` no arquivo `/etc/hosts`, como mostrado abaixo:
+>
+> ```
+> 127.0.0.1       localhost kafka
+> ```
+
 2. Em um segundo terminal, inicie os workers de download e conversão:
 
    ```bash
