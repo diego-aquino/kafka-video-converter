@@ -9,6 +9,7 @@ from constants import (
     VIDEO_CONVERSION_TOPIC,
     VIDEO_DOWNLOAD_DIRECTORY,
     VIDEO_TEMPORARY_DIRECTORY,
+    VIDEO_CONVERSION_RESOLUTIONS,
 )
 
 producer = KafkaProducer(bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
@@ -49,11 +50,14 @@ def send_video_to_conversion(conversion_id, video_path):
     )
 
 
-def run_video_downloader():
+BEST_VIDEO_HEIGHT_TO_DOWNLOAD = VIDEO_CONVERSION_RESOLUTIONS[0].split(":")[1]
 
+
+def run_video_downloader():
     with YoutubeDL(
         {
             "outtmpl": "%(title)s [%(id)s].%(ext)s",
+            "format": f"bv*[height<={BEST_VIDEO_HEIGHT_TO_DOWNLOAD}]+ba",
             "paths": {
                 "home": VIDEO_DOWNLOAD_DIRECTORY,
                 "temp": VIDEO_TEMPORARY_DIRECTORY,
