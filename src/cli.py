@@ -53,10 +53,10 @@ def log_converted_video_results(conversion_id):
         if resolution in pending_resolutions:
             pending_resolutions.remove(resolution)
 
+        video_result_consumer.commit()
+
         if len(pending_resolutions) == 0:
             break
-
-        video_result_consumer.commit()
 
 
 def cli():
