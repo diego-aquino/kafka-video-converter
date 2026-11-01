@@ -1,4 +1,4 @@
-Brotli==1.2.0
+Brotli==1.2.1
 certifi==2026.10.19
 charset-normalizer==3.3.2
 ffmpeg-python==0.2.0
